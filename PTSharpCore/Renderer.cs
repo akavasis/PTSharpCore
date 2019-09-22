@@ -26,7 +26,7 @@ namespace PTSharpCore
 
         Renderer() {}
         
-        public static Renderer NewRenderer(Scene scene, Camera camera, Sampler sampler, int w, int h)
+        public static Renderer NewRenderer(Scene scene, Camera camera, Sampler sampler, int w, int h, bool multithreaded)
         {
             Renderer r = new Renderer();
             r.Scene = scene;
@@ -39,7 +39,10 @@ namespace PTSharpCore
             r.AdaptiveThreshold = 1;
             r.FireflySamples = 0;
             r.FireflyThreshold = 1;
-            r.NumCPU = Environment.ProcessorCount;
+            if (multithreaded)
+                r.NumCPU = Environment.ProcessorCount;
+            else 
+                r.NumCPU = 1;
             return r;
         }
 
@@ -50,7 +53,7 @@ namespace PTSharpCore
             Console.WriteLine("Wrote image to location:" + path);
         }
 
-        public void run()
+        public void Render()
         {
             Scene scene = Scene;
             Camera camera = Camera;
@@ -256,9 +259,15 @@ namespace PTSharpCore
             for (int iter = 1; iter < this.iterations; iter++)
             {
                 Console.WriteLine("[Iteration:" + iter + " of " + iterations + "]");
-                RenderParallel();
+                if (NumCPU.Equals(1))
+                {
+                    Render();
+                } else
+                {
+                    RenderParallel();
+                }
                 this.pathTemplate = pathTemplate;
-                System.Drawing.Bitmap finalrender = this.PBuffer.Image(Channel.ColorChannel);
+                System.Drawing.Bitmap finalrender = PBuffer.Image(Channel.ColorChannel);
                 Console.WriteLine("Writing file...");
                 finalrender.Save(pathTemplate);
             }
@@ -270,10 +279,10 @@ namespace PTSharpCore
             for (int i = 1; i <= iterations; i++)
             {
                 Console.WriteLine("Iterations " + i + " of " + iterations);
-                this.run();
+                Render();
             }
             Buffer buf = PBuffer.Copy();
-            this.writeImage(path, buf, Channel.ColorChannel);
+            writeImage(path, buf, Channel.ColorChannel);
         }
     }
 }

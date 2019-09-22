@@ -25,8 +25,7 @@ namespace PTSharpCore
             var sampler = DefaultSampler.NewSampler(4, 4);
             sampler.SetLightMode(LightMode.LightModeAll);
             sampler.SetSpecularMode(SpecularMode.SpecularModeFirst);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1600 / 2, 1600 / 2);
-            renderer.IterativeRender("sh.png", 10);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1600 / 2, 1600 / 2, true);
         }
 
         public void sh()
@@ -56,7 +55,7 @@ namespace PTSharpCore
            var camera = Camera.LookAt(new Vector(-3, 2, -1), new Vector(0, 0.6, -0.1), new Vector(0, 1, 0), 35);
            camera.SetFocus(new Vector(0, 1, -0.5), 0.03);
            var sampler = DefaultSampler.NewSampler(8, 8);
-           var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+           var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
            renderer.IterativeRender("dragon.png", 10);
         }
 
@@ -111,7 +110,7 @@ namespace PTSharpCore
             var camera = Camera.LookAt(new Vector(0, -1500, 200), new Vector(0, -100, 0), new Vector(0, 0, 1), 20);
             camera.SetFocus(new Vector(0, 20000, 0), 1);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.IterativeRender("runway.png", 1000);
         }
 
@@ -130,7 +129,7 @@ namespace PTSharpCore
             var camera = Camera.LookAt(new Vector(-1, 2, 3), new Vector(0, 0.75, 0), new Vector(0, 1, 0), 50);
             var sampler = DefaultSampler.NewSampler(4, 4);
             sampler.SetSpecularMode(SpecularMode.SpecularModeFirst);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.FireflySamples = 128;
             renderer.IterativeRender("bunny.png", 1000);
         }
@@ -154,7 +153,7 @@ namespace PTSharpCore
             }
             var camera = Camera.LookAt(new Vector(8, 8, 0), new Vector(1, 0, 0), new Vector(0, 1, 0), 45);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("ellipsoid.png", 1000);
         }
 
@@ -176,7 +175,7 @@ namespace PTSharpCore
             var camera = Camera.LookAt(new Vector(0, -5, 5), new Vector(0, 0, 0), new Vector(0, 0, 1), 50);
             var sampler = DefaultSampler.NewSampler(16, 8);
             sampler.SetSpecularMode(SpecularMode.SpecularModeAll);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("refraction.png", 100);
         }
 
@@ -211,7 +210,7 @@ namespace PTSharpCore
             scene.Add(Sphere.NewSphere(new Vector(fn, fn / 3, fn * 2), 1, Material.LightMaterial(Colour.White, 100)));
             var camera = Camera.LookAt(new Vector(fn * 2, fn * 2, fn * 2), new Vector(0, 0, fn / 4), new Vector(0, 0, 1), 35);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 3840, 2160, true);
             renderer.FireflySamples = 128;
             renderer.IterativeRender("qbert.png", 100); 
         }
@@ -230,7 +229,7 @@ namespace PTSharpCore
             scene.Add(Sphere.NewSphere(new Vector(2, 10, 2), 1, Material.LightMaterial(Colour.White, 30)));
             var camera = Camera.LookAt(new Vector(0, 1.5, 2), new Vector(0, 0.5, 0), new Vector(0, 1, 0), 35);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("love.png", 1000); 
         }
 
@@ -255,7 +254,7 @@ namespace PTSharpCore
             scene.Add(Sphere.NewSphere(new Vector(0, 5, 0), 1, Material.LightMaterial(Colour.White, 25)));
             var camera = Camera.LookAt(new Vector(0, 3, 6), new Vector(0, 1, 0), new Vector(0, 1, 0), 30);
             var sampler = DefaultSampler.NewSampler(16, 16);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.FireflySamples = 32;
             renderer.IterativeRender("materialspheres.png", 100);
         }
@@ -298,7 +297,7 @@ namespace PTSharpCore
             }
             var camera = Camera.LookAt(new Vector(-23, 13, 20), new Vector(0, 0, 0), new Vector(0, 0, 1), 45);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("toybrick.png", 1000);
         }
 
@@ -329,7 +328,7 @@ namespace PTSharpCore
             scene.Add(Sphere.NewSphere(new Vector(1, 0, 10), 3, Material.LightMaterial(Colour.White, 20)));
             var camera = Camera.LookAt(new Vector(-5, 0, 5), new Vector(1, 0, 0), new Vector(0, 0, 1), 45);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("cylinder.png", 1000);
         }
 
@@ -348,7 +347,7 @@ namespace PTSharpCore
             camera.SetFocus(new Vector(-0.75, 1, -1), 0.1);
             DefaultSampler sampler = DefaultSampler.NewSampler(4, 8);
             sampler.SpecularMode = SpecularMode.SpecularModeFirst;
-            Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, width, height);
+            Renderer renderer = Renderer.NewRenderer(scene, camera, sampler, width, height, true);
             renderer.FireflySamples = 64;
             renderer.IterativeRender("sphere.png", 500);
         }
@@ -365,7 +364,7 @@ namespace PTSharpCore
             var camera = Camera.LookAt(new Vector(2, 5, -6), new Vector(0.5, 1, 0), new Vector(0, 1, 0), 45);
             var sampler = DefaultSampler.NewSampler(4, 4);
             sampler.SpecularMode = SpecularMode.SpecularModeFirst;
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.FireflySamples = 64;
             renderer.IterativeRender("teapot.png", 1000); 
         }
@@ -377,14 +376,30 @@ namespace PTSharpCore
             var light = Material.LightMaterial(Colour.White, 300);
             scene.Add(Sphere.NewSphere(new Vector(-0.75, -0.75, 5), 0.25, light));
             scene.Add(Cube.NewCube(new Vector(-1000, -1000, -1000), new Vector(1000, 1000, 0), material));
-            var mesh = STL.Load("hits.stl", material);
+            var mesh = STL.Load("models/hits.stl", material);
             mesh.SmoothNormalsThreshold(Util.Radians(10));
             mesh.FitInside(new Box(new Vector(-1, -1, 0), new Vector(1, 1, 2)), new Vector(0.5, 0.5, 0));
             scene.Add(mesh);
             var camera = Camera.LookAt(new Vector(1.6, -3, 2), new Vector(-0.25, 0.5, 0.5), new Vector(0, 0, 1), 50);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1500, 1500);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, false);
+            renderer.FireflySamples = 128;
             renderer.IterativeRender("hits.png", 1000);
+        }
+
+        public void suzanne()
+        {
+            var scene = new Scene();
+            var material = Material.DiffuseMaterial(Colour.HexColor(0x334D5C));
+            scene.Add(Sphere.NewSphere(new Vector(0.5, 1, 3), 1, Material.LightMaterial(Colour.White, 4)));
+            scene.Add(Sphere.NewSphere(new Vector(1.5, 1, 3), 1, Material.LightMaterial(Colour.White, 4)));
+            scene.Add(Cube.NewCube(new Vector(-5, -5, -2), new Vector(5, 5, -1), material));
+            var mesh = OBJ.Load("models/suzanne.obj", Material.SpecularMaterial(Colour.HexColor(0xEFC94C), 1.3));
+            scene.Add(mesh);
+            var camera = Camera.LookAt(new Vector(1, -0.45, 4), new Vector(1, -0.6, 0.4), new Vector(0, 1, 0), 40);
+            var sampler = DefaultSampler.NewSampler(16, 8);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
+            renderer.IterativeRender("suzanne.png", 1000);
         }
 
         public void sdf()
@@ -411,7 +426,7 @@ namespace PTSharpCore
             var sampler = DefaultSampler.NewSampler(4, 4);
             sampler.LightMode = LightMode.LightModeAll;
             sampler.SpecularMode = SpecularMode.SpecularModeAll;
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.IterativeRender("sdf.png", 1000);
         }
 
@@ -452,7 +467,7 @@ namespace PTSharpCore
             scene.Add(volume);
             var camera = Camera.LookAt(new Vector(0, -3, -3), new Vector(0, 0, 0), new Vector(0, 0, -1), 35);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 512, 512);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 512, 512, false);
             renderer.IterativeRender("volume.png", 1000);
         }
 
@@ -487,7 +502,7 @@ namespace PTSharpCore
             var sampler = DefaultSampler.NewSampler(4, 8);
             sampler.SpecularMode = SpecularMode.SpecularModeAll;
             sampler.LightMode = LightMode.LightModeAll;
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
             renderer.IterativeRender("veachscene.png", 1000);
         }   
     }
