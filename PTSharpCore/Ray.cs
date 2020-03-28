@@ -43,32 +43,27 @@ namespace PTSharpCore
         {
             var n = info.Ray;
             var material = info.material;
-            
             (var n1, var n2) = (1.0, material.Index);
+
             if (info.inside)
             {
                 (n1, n2) = (n2, n1);
             }
-            double p;
-            if (material.Reflectivity >= 0)
-            {
-                p = material.Reflectivity;
-            }
-            else
-            {
-                p = n.Reflectance(this, n1, n2);
-            }
+
+            double p = material.Reflectivity >= 0 ? material.Reflectivity : n.Reflectance(this, n1, n2);
 
             //bool reflect = false;
-            if (bounceType == BounceType.BounceTypeAny)
+            switch (bounceType)
             {
-                reflect = rand.NextDouble() < p;
-            } else if (bounceType == BounceType.BounceTypeDiffuse)
-            {
-                reflect = false;
-            } else if (bounceType == BounceType.BounceTypeSpecular)
-            {
-                reflect = true;
+                case BounceType.BounceTypeAny:
+                    reflect = rand.NextDouble() < p;
+                    break;
+                case BounceType.BounceTypeDiffuse:
+                    reflect = false;
+                    break;
+                case BounceType.BounceTypeSpecular:
+                    reflect = true;
+                    break;
             }
 
             if (reflect)

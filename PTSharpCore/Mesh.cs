@@ -37,8 +37,8 @@ namespace PTSharpCore
         Mesh Copy()
         {
             Triangle[] triangle = new Triangle[Triangles.Length];
-            
-            for(int i=0; i < Triangles.Length; i++)
+
+            for (int i = 0; i < Triangles.Length; i++)
             {
                 triangle[i] = Triangles[i];
             }
@@ -165,7 +165,7 @@ namespace PTSharpCore
 
             Dictionary<Vector, Vector[]> lookup = new Dictionary<Vector, Vector[]>();
             
-            foreach (Triangle t in this.Triangles)
+            foreach (Triangle t in Triangles)
             {
                 NL1.Add(t.N1);
                 NL2.Add(t.N2);

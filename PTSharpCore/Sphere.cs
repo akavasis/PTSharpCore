@@ -57,7 +57,7 @@ namespace PTSharpCore
         }
 
         Vector IShape.UV(Vector p) {
-            //p = p.Sub(Center);
+            p = p.Sub(Center);
             var u = Math.Atan2(p.Z, p.X);
             var v = Math.Atan2(p.Y, new Vector(p.X, 0, p.Z).Length());
             u = 1 - (u + Math.PI) / (2 * Math.PI);

@@ -34,9 +34,7 @@ namespace PTSharpCore
             (n,f) = (n.Min(f),n.Max(f));
             var t0 = Math.Max(Math.Max(n.X, n.Y), n.Z);
             var t1 = Math.Min(Math.Min(f.X, f.Y), f.Z);
-            if (t0 > 0 && t0 < t1)
-                return new Hit(this, t0, null);
-            return Hit.NoHit;
+            return t0 > 0 && t0 < t1 ? new Hit(this, t0, null) : Hit.NoHit;
         }
 
         Vector IShape.UV(Vector p)
@@ -49,22 +47,16 @@ namespace PTSharpCore
 
         Vector IShape.NormalAt(Vector p)
         {
-            switch (p)
+            return p switch
             {
-                case Vector d when p.X < Min.X + Util.EPS:
-                    return new Vector(-1, 0, 0);
-                case Vector e when p.X > Max.X - Util.EPS:
-                    return new Vector(1, 0, 0);
-                case Vector d when p.Y < Min.Y + Util.EPS:
-                    return new Vector(0, -1, 0);
-                case Vector d when p.Y > Max.Y - Util.EPS:
-                    return new Vector(0, 1, 0);
-                case Vector d when p.Z < Min.Z + Util.EPS:
-                    return new Vector(0, 0, -1);
-                case Vector d when p.Z > Max.Z - Util.EPS:
-                    return new Vector(0, 0, 1);
-            }
-            return new Vector(0, 1, 0);
+                Vector d when p.X < Min.X + Util.EPS => new Vector(-1, 0, 0),
+                Vector e when p.X > Max.X - Util.EPS => new Vector(1, 0, 0),
+                Vector d when p.Y < Min.Y + Util.EPS => new Vector(0, -1, 0),
+                Vector d when p.Y > Max.Y - Util.EPS => new Vector(0, 1, 0),
+                Vector d when p.Z < Min.Z + Util.EPS => new Vector(0, 0, -1),
+                Vector d when p.Z > Max.Z - Util.EPS => new Vector(0, 0, 1),
+                _ => new Vector(0, 1, 0),
+            };
         }
         
         Mesh CubeMesh()

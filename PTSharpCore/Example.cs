@@ -210,7 +210,7 @@ namespace PTSharpCore
             scene.Add(Sphere.NewSphere(new Vector(fn, fn / 3, fn * 2), 1, Material.LightMaterial(Colour.White, 100)));
             var camera = Camera.LookAt(new Vector(fn * 2, fn * 2, fn * 2), new Vector(0, 0, fn / 4), new Vector(0, 0, 1), 35);
             var sampler = DefaultSampler.NewSampler(4, 4);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 3840, 2160, true);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1920, 1080, true);
             renderer.FireflySamples = 128;
             renderer.IterativeRender("qbert.png", 100); 
         }

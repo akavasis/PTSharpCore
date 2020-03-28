@@ -66,23 +66,24 @@ namespace PTSharpCore
 
             internal Hit Intersect(Ray r, double tmin, double tmax)
             {
-                if(Axis == Axis.AxisNone)
+                switch (Axis)
                 {
-                    return IntersectShapes(r);
-                } else if (Axis == Axis.AxisX)
-                {
-                    tsplit = (Point - r.Origin.X) / r.Direction.X;
-                    leftFirst = (r.Origin.X < Point) || (r.Origin.X == Point && r.Direction.X <= 0);
-                } else if (Axis == Axis.AxisY)
-                {
-                    tsplit = (Point - r.Origin.Y) / r.Direction.Y;
-                    leftFirst = (r.Origin.Y < Point) || (r.Origin.Y == Point && r.Direction.Y <= 0);
-                } else if (Axis == Axis.AxisZ)
-                {
-                    tsplit = (Point - r.Origin.Z) / r.Direction.Z;
-                    leftFirst = (r.Origin.Z < Point) || (r.Origin.Z == Point && r.Direction.Z <= 0);
+                    case Axis.AxisNone:
+                        return IntersectShapes(r);
+                    case Axis.AxisX:
+                        tsplit = (Point - r.Origin.X) / r.Direction.X;
+                        leftFirst = (r.Origin.X < Point) || (r.Origin.X == Point && r.Direction.X <= 0);
+                        break;
+                    case Axis.AxisY:
+                        tsplit = (Point - r.Origin.Y) / r.Direction.Y;
+                        leftFirst = (r.Origin.Y < Point) || (r.Origin.Y == Point && r.Direction.Y <= 0);
+                        break;
+                    case Axis.AxisZ:
+                        tsplit = (Point - r.Origin.Z) / r.Direction.Z;
+                        leftFirst = (r.Origin.Z < Point) || (r.Origin.Z == Point && r.Direction.Z <= 0);
+                        break;
                 }
-                
+
                 Node first, second; 
 
                 if(leftFirst)
@@ -96,7 +97,7 @@ namespace PTSharpCore
                     second = Left;
                 }
 
-                if(tsplit > tmax || tsplit <= 0)
+                if (tsplit > tmax || tsplit <= 0)
                 {
                     return first.Intersect(r, tmin, tmax);
                 }
@@ -163,18 +164,22 @@ namespace PTSharpCore
             public int PartitionScore(Axis axis, double point)
             {
                 (int left, int right) = (0, 0);
-
-                foreach (var shape in Shapes)
+                foreach (var box in from shape in Shapes
+                                    let box = shape.BoundingBox()
+                                    select box)
                 {
-                    var box = shape.BoundingBox();
                     (bool l, bool r) = box.Partition(axis, point);
-                    if (l is true) {
+                    if (l)
+                    {
                         left++;
                     }
-                    if (r is true) {
+
+                    if (r)
+                    {
                         right++;
                     }
                 }
+
                 if (left >= right) {
                     return left;
                 }
