@@ -9,7 +9,6 @@ namespace PTSharpCore
 {
     public class Tree
     {
-
         internal Box Box;
         internal Node Root;
 
@@ -47,7 +46,6 @@ namespace PTSharpCore
             IShape[] Shapes;
             Node Left;
             Node Right;
-
             public double tsplit;
             public bool leftFirst;
 
@@ -118,7 +116,6 @@ namespace PTSharpCore
                     if(h1.T <= h2.T)
                     {
                         return h1;
-
                     }
                     else
                     {
@@ -223,7 +220,8 @@ namespace PTSharpCore
                 List<double> ys = new List<double>();
                 List<double> zs = new List<double>();
 
-                foreach (var shape in Shapes) {
+                foreach (var shape in Shapes) 
+                {
                     Box box = shape.BoundingBox();
                     xs.Add(box.Min.X); 
                     xs.Add(box.Max.X); 
@@ -243,27 +241,34 @@ namespace PTSharpCore
                 var bestPoint = 0.0;
 
                 var sx = PartitionScore(Axis.AxisX, mx);
-                if (sx < best) {
+                
+                if (sx < best) 
+                {
                     best = sx;
                     bestAxis = Axis.AxisX;
                     bestPoint = mx;
                 }
 
                 var sy = PartitionScore(Axis.AxisY, my);
-                if (sy < best) {
+                
+                if (sy < best) 
+                {
                     best = sy;
                     bestAxis = Axis.AxisY;
                     bestPoint = my;
                 }
 
                 var sz = PartitionScore(Axis.AxisZ, mz);
-                if (sz < best) {
+                
+                if (sz < best) 
+                {
                     best = sz;
                     bestAxis = Axis.AxisZ;
                     bestPoint = mz;
                 }
 
-                if (bestAxis == Axis.AxisNone) {
+                if (bestAxis == Axis.AxisNone) 
+                {
                     return;
                 }
 
