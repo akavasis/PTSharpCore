@@ -25,17 +25,20 @@ namespace PTSharpCore
             var sampler = DefaultSampler.NewSampler(4, 4);
             sampler.SetLightMode(LightMode.LightModeAll);
             sampler.SetSpecularMode(SpecularMode.SpecularModeFirst);
-            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1600 / 2, 1600 / 2, true);
+
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 1600 / 2, 1600 / 2, false);
+
+            renderer.IterativeRender("sh.png", 10);
         }
 
         public void sh()
         {
-            for(int l = 0; l <= 4; l++)
+            for (int l = 0; l <= 4; l++)
             {
-                for(int m = -l; m <= l; m++)
+                for (int m = -l; m <= l; m++)
                 {
                     shrender(l, m);
-                }   
+                }
             }
         }
 
