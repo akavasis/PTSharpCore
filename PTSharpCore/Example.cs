@@ -7,6 +7,35 @@ namespace PTSharpCore
 {
     class Example
     {
+        public void maze()
+        {
+            var scene = new Scene();
+            var floor = Material.GlossyMaterial(Colour.HexColor(0x7E827A), 1.1, Util.Radians(30));
+            var material = Material.GlossyMaterial(Colour.HexColor(0xE3CDA4), 1.1, Util.Radians(30));
+            scene.Add(Cube.NewCube(new Vector(-10000, -10000, -10000), new Vector(10000, 10000, 0), floor));
+            var n = 24;
+
+            for (int x = -n; x <= n; x++) 
+            {
+                for (int y = -n; y <= n; y++)
+                {
+                    if (ThreadSafeRandom.NextDouble() > 0.8) 
+                    {
+                        var min = new Vector((double)x - 0.5, (double)y - 0.5, 0);
+                        var max = new Vector((double)x + 0.5, (double)y + 0.5, 1);
+                        var cube = Cube.NewCube(min, max, material);
+                        scene.Add(cube);        
+                    }
+                }
+            }
+            scene.Add(Sphere.NewSphere(new Vector(0, 0, 2.25), 0.25, Material.LightMaterial(Colour.White, 500)));
+            var camera = Camera.LookAt(new Vector(1, 0, 30), new Vector(0, 0, 0), new Vector(0, 0, 1), 35);
+            var sampler = DefaultSampler.NewSampler(4, 4);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
+            renderer.FireflySamples = 128;
+            renderer.IterativeRender("maze.png", 1000);
+        }
+        
         public static void shrender(int l, int m)
         {
             Scene scene = new Scene();
