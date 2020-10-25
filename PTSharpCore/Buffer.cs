@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
+using System.Threading;
 
 namespace PTSharpCore
 {
@@ -9,22 +9,60 @@ namespace PTSharpCore
         ColorChannel, VarianceChannel, StandardDeviationChannel, SamplesChannel
     }
 
+    public class Pixel
+    {
+        public int Samples;
+        public Colour M;
+        public Colour V;
+
+        public Pixel() { }
+
+        public Pixel(int Samples, Colour M, Colour V)
+        {
+            this.Samples = Samples;
+            this.M = M;
+            this.V = V;
+        }
+
+        public void AddSample(Colour sample)
+        {
+            Interlocked.Increment(ref Samples);
+            if (Samples == 1)
+            {
+                M = sample;
+                return;
+            }
+            Colour m = M;
+            M = M.Add(sample.Sub(M).DivScalar((double)Samples));
+            V = V.Add(sample.Sub(m).Mul(sample.Sub(M)));
+        }
+
+        public Colour Color() => M;
+
+        public Colour Variance()
+        {
+            if (Samples < 2)
+            {
+                return Colour.Black;
+            }
+            return V.DivScalar((double)(Samples - 1));
+        }
+
+        public Colour StandardDeviation() => Variance().Pow(0.5);
+    }
+
     class Buffer
     {
         public int W, H;
         public Pixel[] Pixels;
-        public List<Pixel> PixelList;
-        byte[] imageBuffer;
-
+        
         public Buffer() { }
 
         public Buffer(int width, int height)
         {
             W = width;
             H = height;
-            imageBuffer = new byte[256 * 4 * height];
             Pixels = new Pixel[width * height];
-            PixelList = new List<Pixel>(width * height);
             for (int i = 0; i < Pixels.Length; i++)
             {
                 Pixels[i] = new Pixel(0, new Colour(0, 0, 0), new Colour(0, 0, 0));
@@ -40,11 +78,7 @@ namespace PTSharpCore
 
         public static Buffer NewBuffer(int w, int h)
         {
-            Pixel[] pixbuffer = new Pixel[w * h];
-            for (int i = 0; i < pixbuffer.Length; i++)
-            {
-                pixbuffer[i] = new Pixel(0, new Colour(0, 0, 0), new Colour(0, 0, 0));
-            }
+            var pixbuffer = new Pixel[w * h];
             return new Buffer(w, h, pixbuffer);
         }
 
@@ -101,48 +135,6 @@ namespace PTSharpCore
                 }
             }
             return bmp;
-        }
-        
-        public class Pixel
-        {
-            public int Samples;
-            public Colour M;
-            public Colour V;
-
-            public Pixel() { }
-
-            public Pixel(int Samples, Colour M, Colour V)
-            {
-                this.Samples = Samples;
-                this.M = M;
-                this.V = V;
-            }
-
-            public void AddSample(Colour sample)
-            {
-                Samples++;
-                if (Samples == 1)
-                {
-                    M = sample;
-                    return;
-                }
-                Colour m = M;
-                M = M.Add(sample.Sub(M).DivScalar((double)Samples));
-                V = V.Add(sample.Sub(m).Mul(sample.Sub(M)));
-            }
-
-            public Colour Color() => M;
-
-            public Colour Variance()
-            {
-                if (Samples < 2)
-                {
-                    return new Colour(0, 0, 0);
-                }
-                return V.DivScalar((double)(Samples - 1));
-            }
-
-            public Colour StandardDeviation() => Variance().Pow(0.5);
         }
     }
 }
