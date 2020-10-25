@@ -36,6 +36,38 @@ namespace PTSharpCore
             renderer.IterativeRender("maze.png", 1000);
         }
         
+        public void cube()
+        {
+            var scene = new Scene();
+
+            var meshes = new IShape[]
+            {
+                Util.CreateCubeMesh(Material.GlossyMaterial(Colour.HexColor(0x3B596A), 1.5, Util.Radians(20))),
+                Util.CreateCubeMesh(Material.GlossyMaterial(Colour.HexColor(0x427676), 1.5, Util.Radians(20))),
+                Util.CreateCubeMesh(Material.GlossyMaterial(Colour.HexColor(0x3F9A82), 1.5, Util.Radians(20))),
+                Util.CreateCubeMesh(Material.GlossyMaterial(Colour.HexColor(0xA1CD73), 1.5, Util.Radians(20))),
+                Util.CreateCubeMesh(Material.GlossyMaterial(Colour.HexColor(0xECDB60), 1.5, Util.Radians(20)))
+            };
+
+            for (int x = -8; x <= 8; x++)
+            {
+                for (int z = -12; z <= 12; z++)
+                {
+                    var fx = (double)x;
+                    var fy = ThreadSafeRandom.NextDouble() * 2;
+                    var fz = (double)z;
+                    scene.Add(TransformedShape.NewTransformedShape(meshes[new Random().Next(meshes.Length)], new Matrix().Translate(new Vector(fx, fy, fz))));
+                    scene.Add(TransformedShape.NewTransformedShape(meshes[new Random().Next(meshes.Length)], new Matrix().Translate(new Vector(fx, fy - 1, fz))));
+                }
+            }
+
+            scene.Add(Sphere.NewSphere(new Vector(8, 10, 0), 3, Material.LightMaterial(Colour.White, 30)));
+            var camera = Camera.LookAt(new Vector(-10, 10, 0), new Vector(-2, 0, 0), new Vector(0, 1, 0), 45);
+            var sampler = DefaultSampler.NewSampler(4, 4);
+            var renderer = Renderer.NewRenderer(scene, camera, sampler, 960, 540, true);
+            renderer.IterativeRender("cube.png", 100);
+        }
+        
         public static void shrender(int l, int m)
         {
             Scene scene = new Scene();
