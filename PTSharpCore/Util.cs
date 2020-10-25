@@ -41,6 +41,13 @@ namespace PTSharpCore
             mesh.SmoothNormalsThreshold(Radians(10));
             return mesh;
         }
+	    
+	public static Mesh CreateCubeMesh(Material material)
+        {
+            var mesh = STL.LoadSTLB("cube.stl", material);
+            mesh.FitInside(new Box(new Vector(0, 0, 0), new Vector(1, 1, 1)), new Vector(0.5, 0.5, 0.5));
+            return mesh;
+        }    
 
         public static Mesh CreateBrick(int color)
         {
