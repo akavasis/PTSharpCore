@@ -9,6 +9,7 @@ namespace PTSharpCore
 {
     public class Tree
     {
+
         internal Box Box;
         internal Node Root;
 
@@ -31,32 +32,36 @@ namespace PTSharpCore
 
         internal Hit Intersect(Ray r)
         {
-            
+
             (double tmin, double tmax) = Box.Intersect(r);
-            
-            if (tmax < tmin || tmax <= 0) {
+
+            if (tmax < tmin || tmax <= 0)
+            {
                 return Hit.NoHit;
             }
             return Root.Intersect(r, tmin, tmax);
         }
 
-        public class Node {
+        public class Node
+        {
             Axis Axis;
             double Point;
             IShape[] Shapes;
             Node Left;
             Node Right;
+
             public double tsplit;
             public bool leftFirst;
 
-            internal Node(Axis axis, double point, IShape[] shapes, Node left, Node right) {
+            internal Node(Axis axis, double point, IShape[] shapes, Node left, Node right)
+            {
                 Axis = axis;
                 Point = point;
                 Shapes = shapes;
                 Left = left;
                 Right = right;
             }
-            
+
             internal static Node NewNode(IShape[] shapes)
             {
                 return new Node(Axis.AxisNone, 0, shapes, null, null);
@@ -69,22 +74,22 @@ namespace PTSharpCore
                     case Axis.AxisNone:
                         return IntersectShapes(r);
                     case Axis.AxisX:
-                        tsplit = (Point - r.Origin.X) / r.Direction.X;
-                        leftFirst = (r.Origin.X < Point) || (r.Origin.X == Point && r.Direction.X <= 0);
+                        tsplit = (Point - r.Origin.x) / r.Direction.x;
+                        leftFirst = (r.Origin.x < Point) || (r.Origin.x == Point && r.Direction.x <= 0);
                         break;
                     case Axis.AxisY:
-                        tsplit = (Point - r.Origin.Y) / r.Direction.Y;
-                        leftFirst = (r.Origin.Y < Point) || (r.Origin.Y == Point && r.Direction.Y <= 0);
+                        tsplit = (Point - r.Origin.y) / r.Direction.y;
+                        leftFirst = (r.Origin.y < Point) || (r.Origin.y == Point && r.Direction.y <= 0);
                         break;
                     case Axis.AxisZ:
-                        tsplit = (Point - r.Origin.Z) / r.Direction.Z;
-                        leftFirst = (r.Origin.Z < Point) || (r.Origin.Z == Point && r.Direction.Z <= 0);
+                        tsplit = (Point - r.Origin.z) / r.Direction.z;
+                        leftFirst = (r.Origin.z < Point) || (r.Origin.z == Point && r.Direction.z <= 0);
                         break;
                 }
 
-                Node first, second; 
+                Node first, second;
 
-                if(leftFirst)
+                if (leftFirst)
                 {
                     first = Left;
                     second = Right;
@@ -99,23 +104,25 @@ namespace PTSharpCore
                 {
                     return first.Intersect(r, tmin, tmax);
                 }
-                else if(tsplit < tmin) {
+                else if (tsplit < tmin)
+                {
                     return second.Intersect(r, tmin, tmax);
                 }
                 else
                 {
                     var h1 = first.Intersect(r, tmin, tsplit);
-          
-                    if(h1.T <= tsplit)
+
+                    if (h1.T <= tsplit)
                     {
                         return h1;
                     }
 
                     var h2 = second.Intersect(r, tsplit, Math.Min(tmax, h1.T));
-          
-                    if(h1.T <= h2.T)
+
+                    if (h1.T <= h2.T)
                     {
                         return h1;
+
                     }
                     else
                     {
@@ -157,7 +164,7 @@ namespace PTSharpCore
                     return (a + b) / 2;
                 }
             }
-                        
+
             public int PartitionScore(Axis axis, double point)
             {
                 (int left, int right) = (0, 0);
@@ -177,10 +184,12 @@ namespace PTSharpCore
                     }
                 }
 
-                if (left >= right) {
+                if (left >= right)
+                {
                     return left;
                 }
-                else {
+                else
+                {
                     return right;
                 }
             }
@@ -209,7 +218,7 @@ namespace PTSharpCore
                 return (left.ToArray(), right.ToArray());
             }
 
-            public void Split(int depth) 
+            public void Split(int depth)
             {
                 if (Shapes.Length < 8)
                 {
@@ -220,15 +229,15 @@ namespace PTSharpCore
                 List<double> ys = new List<double>();
                 List<double> zs = new List<double>();
 
-                foreach (var shape in Shapes) 
+                foreach (var shape in Shapes)
                 {
                     Box box = shape.BoundingBox();
-                    xs.Add(box.Min.X); 
-                    xs.Add(box.Max.X); 
-                    ys.Add(box.Min.Y); 
-                    ys.Add(box.Max.Y); 
-                    zs.Add(box.Min.Z); 
-                    zs.Add(box.Max.Z); 
+                    xs.Add(box.Min.x);
+                    xs.Add(box.Max.x);
+                    ys.Add(box.Min.y);
+                    ys.Add(box.Max.y);
+                    zs.Add(box.Min.z);
+                    zs.Add(box.Max.z);
                 }
 
                 xs.Sort();
@@ -241,8 +250,7 @@ namespace PTSharpCore
                 var bestPoint = 0.0;
 
                 var sx = PartitionScore(Axis.AxisX, mx);
-                
-                if (sx < best) 
+                if (sx < best)
                 {
                     best = sx;
                     bestAxis = Axis.AxisX;
@@ -250,8 +258,7 @@ namespace PTSharpCore
                 }
 
                 var sy = PartitionScore(Axis.AxisY, my);
-                
-                if (sy < best) 
+                if (sy < best)
                 {
                     best = sy;
                     bestAxis = Axis.AxisY;
@@ -259,15 +266,14 @@ namespace PTSharpCore
                 }
 
                 var sz = PartitionScore(Axis.AxisZ, mz);
-                
-                if (sz < best) 
+                if (sz < best)
                 {
                     best = sz;
                     bestAxis = Axis.AxisZ;
                     bestPoint = mz;
                 }
 
-                if (bestAxis == Axis.AxisNone) 
+                if (bestAxis == Axis.AxisNone)
                 {
                     return;
                 }

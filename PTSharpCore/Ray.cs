@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 
 namespace PTSharpCore
 {
@@ -36,27 +37,28 @@ namespace PTSharpCore
 
         public Ray ConeBounce(double theta, double u, double v, Random rand)
         {
-           return new Ray(Origin, Util.Cone(Direction, theta, u, v, rand));
+            return new Ray(Origin, Util.Cone(Direction, theta, u, v, rand));
         }
 
         public (Ray, bool, double) Bounce(HitInfo info, double u, double v, BounceType bounceType, Random rand)
         {
             var n = info.Ray;
             var material = info.material;
-            (var n1, var n2) = (1.0, material.Index);
+
+            var n1 = 1.0;
+            var n2 = material.Index;
 
             if (info.inside)
             {
-                (n1, n2) = (n2, n1);
+                Interlocked.Exchange(ref n1, n2);
             }
 
             double p = material.Reflectivity >= 0 ? material.Reflectivity : n.Reflectance(this, n1, n2);
 
-            //bool reflect = false;
             switch (bounceType)
             {
                 case BounceType.BounceTypeAny:
-                    reflect = rand.NextDouble() < p;
+                    reflect = ThreadSafeRandom.NextDouble() < p;
                     break;
                 case BounceType.BounceTypeDiffuse:
                     reflect = false;

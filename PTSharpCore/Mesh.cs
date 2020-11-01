@@ -13,27 +13,27 @@ namespace PTSharpCore
         public Triangle[] Triangles;
         Box box;
         Tree tree;
-        
+
         Mesh() { }
-        
+
         internal Mesh(Triangle[] triangles_, Box box_, Tree tree_)
         {
             Triangles = triangles_;
             box = box_;
             tree = tree_;
         }
-        
+
         internal static Mesh NewMesh(Triangle[] triangles)
         {
             return new Mesh(triangles, null, null);
         }
-        
+
         void dirty()
         {
             box = null;
             tree = null;
         }
-        
+
         Mesh Copy()
         {
             Triangle[] triangle = new Triangle[Triangles.Length];
@@ -51,7 +51,7 @@ namespace PTSharpCore
             {
                 var shapes = new IShape[Triangles.Length];
 
-                for (int i=0; i<Triangles.Length; i++)
+                for (int i = 0; i < Triangles.Length; i++)
                 {
                     shapes[i] = Triangles[i];
                 }
@@ -65,7 +65,7 @@ namespace PTSharpCore
             {
                 List<IShape> shapes = new List<IShape>();
 
-                foreach(var triangle in Triangles)
+                foreach (var triangle in Triangles)
                 {
                     shapes.Add(triangle);
                 }
@@ -87,7 +87,7 @@ namespace PTSharpCore
         {
             return tree.Intersect(r);
         }
-        
+
         Box IShape.BoundingBox()
         {
             if (box is null)
@@ -104,7 +104,7 @@ namespace PTSharpCore
             }
             return box;
         }
-        
+
         internal Box BoundingBox()
         {
             if (box is null)
@@ -158,13 +158,13 @@ namespace PTSharpCore
         internal void SmoothNormalsThreshold(double radians)
         {
             double threshold = Math.Cos(radians);
-            
+
             List<Vector> NL1 = new List<Vector>();
             List<Vector> NL2 = new List<Vector>();
             List<Vector> NL3 = new List<Vector>();
 
             Dictionary<Vector, Vector[]> lookup = new Dictionary<Vector, Vector[]>();
-            
+
             foreach (Triangle t in Triangles)
             {
                 NL1.Add(t.N1);
@@ -242,7 +242,7 @@ namespace PTSharpCore
 
         internal void Transform(Matrix matrix)
         {
-            foreach(Triangle t in Triangles)
+            foreach (Triangle t in Triangles)
             {
                 t.V1 = matrix.MulPosition(t.V1);
                 t.V2 = matrix.MulPosition(t.V2);

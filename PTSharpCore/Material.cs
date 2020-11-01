@@ -74,13 +74,13 @@ namespace PTSharpCore
             var uv = shape.UV(point);
             if (material.Texture != null)
             {
-                material.Color = material.Texture.Sample(uv.X, uv.Y);
+                material.Color = material.Texture.Sample(uv.x, uv.y);
             }
-            if(material.GlossTexture != null)
+            if (material.GlossTexture != null)
             {
-                var c = material.GlossTexture.Sample(uv.X, uv.Y);
+                var c = material.GlossTexture.Sample(uv.x, uv.y);
                 material.Gloss = (c.r + c.g + c.b) / 3;
-             }
+            }
             return material;
         }
     };

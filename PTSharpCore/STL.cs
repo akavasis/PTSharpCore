@@ -36,11 +36,11 @@ namespace PTSharpCore
         struct STLTriangle
         {
             // 4 * 3 * 4 byte + 2 byte = 50 byte
-            public  STLVector Normal;
-            public  STLVector A;
-            public  STLVector B;
-            public  STLVector C;
-            public  ushort AttributeByteCount;
+            public STLVector Normal;
+            public STLVector A;
+            public STLVector B;
+            public STLVector C;
+            public ushort AttributeByteCount;
 
             public STLTriangle(
                 STLVector normalVec,
@@ -76,10 +76,10 @@ namespace PTSharpCore
                     new STLVector(0, 0, 1),
                     new STLVector(1, 0, 0)),
         };
-    
+
         public static Mesh Load(String filePath, Material material)
         {
-          
+
             byte[] buffer = new byte[80];
             FileInfo fi = new FileInfo(filePath);
             BinaryReader reader;
@@ -90,7 +90,7 @@ namespace PTSharpCore
                 Console.WriteLine("Loading STL:" + filePath);
                 size = fi.Length;
                 bool isReadOnly = fi.IsReadOnly;
-                
+
                 using (reader = new BinaryReader(File.Open(filePath, FileMode.Open)))
                 {
                     buffer = reader.ReadBytes(80);
@@ -103,7 +103,9 @@ namespace PTSharpCore
                     if (code.Equals("00") || code.Equals("10181") || code.Equals("8689") || code.Equals("19593"))
                     {
                         return LoadSTLB(filePath, material);
-                    } else {
+                    }
+                    else
+                    {
                         return LoadSTLA(filePath, material);
                     }
                 }
@@ -212,14 +214,14 @@ namespace PTSharpCore
                             line = file.ReadLine();
                             counter++;
                         }
-                        
+
                         if (line.Contains("endloop"))
                         {
                             //Console.WriteLine("End loop");
                             line = file.ReadLine();
                             counter++;
                         }
-                        
+
                         if (line.Contains("endfacet"))
                         {
                             //Console.WriteLine("End facet");
@@ -251,7 +253,7 @@ namespace PTSharpCore
             return Mesh.NewMesh(triangles.ToArray());
         }
 
-       public static Mesh LoadSTLB(String filename, Material material)
+        public static Mesh LoadSTLB(String filename, Material material)
         {
             string header;
             STLTriangle[] mesh;

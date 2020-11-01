@@ -11,7 +11,7 @@ namespace PTSharpCore
         public IShape Shape;
         private Matrix Matrix;
         private Matrix Inverse;
-        
+
         TransformedShape() { }
 
         internal TransformedShape(IShape s, Matrix m, Matrix im)
@@ -27,7 +27,7 @@ namespace PTSharpCore
         }
 
         internal static IShape NewTransformedShape(IShape s, Matrix m)
-        {   
+        {
             return new TransformedShape(s, m, m.Inverse());
         }
 
@@ -35,13 +35,13 @@ namespace PTSharpCore
         {
             return Matrix.MulBox(Shape.BoundingBox());
         }
-                
+
         Hit IShape.Intersect(Ray r)
         {
             var shapeRay = Matrix.Inverse().MulRay(r);
             var hit = Shape.Intersect(shapeRay);
 
-            if(!hit.Ok())
+            if (!hit.Ok())
             {
                 return hit;
             }
@@ -54,7 +54,7 @@ namespace PTSharpCore
             var material = Material.MaterialAt(shape, shapePosition);
             var inside = false;
 
-            if(shapeNormal.Dot(shapeRay.Direction) > 0)
+            if (shapeNormal.Dot(shapeRay.Direction) > 0)
             {
                 normal = normal.Negate();
                 inside = true;

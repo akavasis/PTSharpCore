@@ -21,13 +21,13 @@ namespace PTSharpCore
             c.m = 1 / Math.Tan(fovy * Math.PI / 360);
             return c;
         }
-        
-        public void SetFocus(Vector focalPoint_, double apertureRadius_)
+
+        public void SetFocus(Vector focalPoint, double apertureRadius)
         {
-            focalDistance = focalPoint_.Sub(p).Length();
-            apertureRadius = apertureRadius_;
+            focalDistance = focalPoint.Sub(p).Length();
+            this.apertureRadius = apertureRadius;
         }
-        
+
         public Ray CastRay(int x, int y, int w, int h, double u, double v, Random rand)
         {
             double aspect = (double)w / (double)h;
@@ -42,8 +42,8 @@ namespace PTSharpCore
             if (apertureRadius > 0)
             {
                 var focalPoint = this.p.Add(d.MulScalar(focalDistance));
-                var angle = rand.NextDouble() * 2 * Math.PI;
-                var radius = rand.NextDouble() * apertureRadius;
+                var angle = ThreadSafeRandom.NextDouble(rand) * 2 * Math.PI;
+                var radius = ThreadSafeRandom.NextDouble(rand) * apertureRadius;
                 p = p.Add(this.u.MulScalar(Math.Cos(angle) * radius));
                 p = p.Add(this.v.MulScalar(Math.Sin(angle) * radius));
                 d = focalPoint.Sub(p).Normalize();

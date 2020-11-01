@@ -55,7 +55,7 @@ namespace PTSharpCore
     {
         public int W, H;
         public Pixel[] Pixels;
-        
+
         public Buffer() { }
 
         public Buffer(int width, int height)
@@ -102,7 +102,7 @@ namespace PTSharpCore
         public Bitmap Image(Channel channel)
         {
             Bitmap bmp = new Bitmap(W, H);
-            double maxSamples=0;
+            double maxSamples = 0;
             if (channel == Channel.SamplesChannel)
             {
                 foreach (Pixel pix in Pixels)

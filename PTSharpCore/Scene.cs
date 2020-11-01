@@ -11,13 +11,13 @@ namespace PTSharpCore
         private Tree tree;
         internal int rays = 0;
 
-        internal IShape[] Shapes; 
+        internal IShape[] Shapes;
         internal IShape[] Lights;
 
-        public Scene() 
+        public Scene()
         {
             Shapes = new IShape[0];
-            Lights = new IShape[0];        
+            Lights = new IShape[0];
         }
 
         internal void Add(IShape p)
@@ -33,7 +33,7 @@ namespace PTSharpCore
 
         public void Compile()
         {
-            foreach(IShape shape in Shapes)
+            foreach (IShape shape in Shapes)
             {
                 shape.Compile();
             }
@@ -47,7 +47,7 @@ namespace PTSharpCore
         {
             return rays;
         }
-        
+
         internal Hit Intersect(Ray r)
         {
             rays++;

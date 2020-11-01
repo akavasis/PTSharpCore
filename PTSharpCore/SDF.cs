@@ -1,3 +1,4 @@
+using PTSharpCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PTSharpCore
 {
-    interface SDF 
+    interface SDF
     {
         double Evaluate(Vector p);
         Box BoundingBox();
@@ -29,7 +30,7 @@ namespace PTSharpCore
         }
 
         public void Compile() { }
-       
+
         Hit IShape.Intersect(Ray ray)
         {
             double epsilon = 0.00001;
@@ -41,20 +42,21 @@ namespace PTSharpCore
             {
                 return Hit.NoHit;
             }
+
             double t = Math.Max(start, t1);
             bool jump = true;
 
             for (int i = 0; i < 1000; i++)
             {
                 var d = Evaluate(ray.Position(t));
-                if(jump && d < 0)
+                if (jump && d < 0)
                 {
                     t -= jumpSize;
                     jump = false;
                     continue;
                 }
 
-                if ( d < epsilon)
+                if (d < epsilon)
                 {
                     return new Hit(this, t, null);
                 }
@@ -66,9 +68,10 @@ namespace PTSharpCore
 
                 t += d;
 
-                if( t > t2)
+                if (t > t2)
                 {
                     return Hit.NoHit;
+
                 }
             }
             return Hit.NoHit;
@@ -82,10 +85,11 @@ namespace PTSharpCore
         Vector IShape.NormalAt(Vector p)
         {
             double e = 0.0001;
-            (var x, var y, var z) = (p.X, p.Y, p.Z);
-            var n = new Vector(Evaluate(new Vector( x - e, y, z)) - Evaluate(new Vector( x + e, y, z)),
-		                       Evaluate(new Vector( x, y - e, z)) - Evaluate(new Vector( x, y + e, z)),
-		                       Evaluate(new Vector( x, y, z - e)) - Evaluate(new Vector( x, y, z + e)));
+            (var x, var y, var z) = (p.x, p.y, p.z);
+
+            var n = new Vector(Evaluate(new Vector(x - e, y, z)) - Evaluate(new Vector(x + e, y, z)),
+                               Evaluate(new Vector(x, y - e, z)) - Evaluate(new Vector(x, y + e, z)),
+                               Evaluate(new Vector(x, y, z - e)) - Evaluate(new Vector(x, y, z + e)));
             return n.Normalize();
         }
 
@@ -115,7 +119,6 @@ namespace PTSharpCore
             this.Radius = Radius;
             this.Exponent = Exponent;
         }
-        
         internal static SDF NewSphereSDF(double radius)
         {
             return new SphereSDF(radius, 2);
@@ -141,26 +144,29 @@ namespace PTSharpCore
         {
             Size = size;
         }
-        
+
         internal static SDF NewCubeSDF(Vector size)
         {
             return new CubeSDF(size);
         }
-        
+
         double SDF.Evaluate(Vector p)
         {
-            double x = p.X;
-            double y = p.Y;
-            double z = p.Z;
+            double x = p.x;
+            double y = p.y;
+            double z = p.z;
+
             if (x < 0)
                 x = -x;
             if (y < 0)
                 y = -y;
             if (z < 0)
                 z = -z;
-            x -= Size.X / 2;
-            y -= Size.Y / 2;
-            z -= Size.Z / 2;
+
+            x -= Size.x / 2;
+            y -= Size.y / 2;
+            z -= Size.z / 2;
+
             double a = x;
             if (y > a)
                 a = y;
@@ -180,7 +186,7 @@ namespace PTSharpCore
 
         Box SDF.BoundingBox()
         {
-            (var x, var y, var z) = (Size.X / 2, Size.Y / 2, Size.Z / 2);
+            (var x, var y, var z) = (Size.x / 2, Size.y / 2, Size.z / 2);
             return new Box(new Vector(-x, -y, -z), new Vector(x, y, z));
         }
     }
@@ -195,7 +201,7 @@ namespace PTSharpCore
             this.Radius = Radius;
             this.Height = Height;
         }
-        
+
         internal static SDF NewCylinderSDF(double radius, double height)
         {
             return new CylinderSDF(radius, height);
@@ -207,7 +213,6 @@ namespace PTSharpCore
             double h = Height / 2;
             return new Box(new Vector(-r, -h, -r), new Vector(r, h, r));
         }
-        
         Box SDF.BoundingBox()
         {
             double r = Radius;
@@ -217,8 +222,8 @@ namespace PTSharpCore
 
         double SDF.Evaluate(Vector p)
         {
-            double x = Math.Sqrt(p.X * p.X + p.Z * p.Z);
-            double y = p.Y;
+            double x = Math.Sqrt(p.x * p.x + p.z * p.z);
+            double y = p.y;
 
             if (x < 0)
                 x = -x;
@@ -243,9 +248,9 @@ namespace PTSharpCore
         }
     }
 
-    class CapsuleSDF:SDF
+    class CapsuleSDF : SDF
     {
-        Vector A,B;
+        Vector A, B;
         double Radius;
         double Exponent;
 
@@ -276,7 +281,7 @@ namespace PTSharpCore
         }
     }
 
-    class TorusSDF:SDF
+    class TorusSDF : SDF
     {
         double MajorRadius;
         double MinRadius;
@@ -290,7 +295,7 @@ namespace PTSharpCore
             this.MajorExponent = MajorExponent;
             this.MinorExponent = MinorExponent;
         }
-        
+
         internal static SDF NewTorusSDF(double major, double minor)
         {
             return new TorusSDF(major, minor, 2, 2);
@@ -298,7 +303,7 @@ namespace PTSharpCore
 
         double SDF.Evaluate(Vector p)
         {
-            Vector q = new Vector(new Vector(p.X, p.Y, 0).LengthN(MajorExponent) - MajorRadius, p.Z, 0);
+            Vector q = new Vector(new Vector(p.x, p.y, 0).LengthN(MajorExponent) - MajorRadius, p.z, 0);
             return q.LengthN(MinorExponent) - MinRadius;
         }
 
@@ -315,7 +320,7 @@ namespace PTSharpCore
         SDF SDF;
         Matrix Matrix;
         Matrix Inverse;
-        
+
         TransformSDF(SDF SDF, Matrix Matrix, Matrix Inverse)
         {
             this.SDF = SDF;
@@ -344,7 +349,7 @@ namespace PTSharpCore
         }
     }
 
-    class ScaleSDF:SDF
+    class ScaleSDF : SDF
     {
         SDF SDF;
         double Factor;
@@ -354,12 +359,12 @@ namespace PTSharpCore
             SDF = sdf;
             this.Factor = Factor;
         }
-        
+
         internal static SDF NewScaleSDF(SDF sdf, double factor)
         {
             return new ScaleSDF(sdf, factor);
         }
-        
+
         double SDF.Evaluate(Vector p)
         {
             return SDF.Evaluate(p.DivScalar(Factor)) * Factor;
@@ -425,7 +430,7 @@ namespace PTSharpCore
             return result;
         }
     }
-    
+
     internal class DifferenceSDF : SDF
     {
         SDF[] Items;
@@ -434,23 +439,26 @@ namespace PTSharpCore
         {
             this.Items = Items;
         }
-        
+
         internal static SDF NewDifferenceSDF(List<SDF> items)
         {
             return new DifferenceSDF(items.ToArray());
         }
 
+
         double SDF.Evaluate(Vector p)
         {
             double result = 0;
             int i = 0;
+
             foreach (SDF item in Items)
             {
                 double d = item.Evaluate(p);
                 if (i == 0)
                 {
                     result = d;
-                } else if (-d > result)
+                }
+                else if (-d > result)
                 {
                     result = -d;
                 }
@@ -468,7 +476,7 @@ namespace PTSharpCore
     internal class IntersectionSDF : SDF
     {
         SDF[] Items;
-        
+
         IntersectionSDF(SDF[] Items)
         {
             this.Items = Items;
@@ -482,7 +490,9 @@ namespace PTSharpCore
         double SDF.Evaluate(Vector p)
         {
             double result = 0;
+
             int i = 0;
+
             foreach (SDF item in Items)
             {
                 double d = item.Evaluate(p);
@@ -516,8 +526,8 @@ namespace PTSharpCore
             return result;
         }
     }
-    
-    class RepeatSDF:SDF
+
+    class RepeatSDF : SDF
     {
         SDF SDF;
         Vector Step;
@@ -532,7 +542,7 @@ namespace PTSharpCore
         {
             return new RepeatSDF(sdf, step);
         }
-        
+
         double SDF.Evaluate(Vector p)
         {
             Vector q = p.Mod(Step).Sub(Step.DivScalar(2));

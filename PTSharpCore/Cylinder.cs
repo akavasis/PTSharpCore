@@ -45,9 +45,9 @@ namespace PTSharpCore
             var r = Radius;
             var o = ray.Origin;
             var d = ray.Direction;
-            var a = (d.X * d.X) + (d.Y * d.Y);
-            var b = (2 * o.X * d.X) + (2 * o.Y * d.Y);
-            var c = (o.X * o.X) + (o.Y * o.Y) - (r * r);
+            var a = (d.x * d.x) + (d.y * d.y);
+            var b = (2 * o.x * d.x) + (2 * o.y * d.y);
+            var c = (o.x * o.x) + (o.y * o.y) - (r * r);
             var q = (b * b) - (4 * a * c);
             if (q < Util.EPS)
             {
@@ -60,8 +60,8 @@ namespace PTSharpCore
             {
                 (t0, t1) = (t1, t0);
             }
-            var z0 = o.Z + t0 * d.Z;
-            var z1 = o.Z + t1 * d.Z;
+            var z0 = o.z + t0 * d.z;
+            var z1 = o.z + t1 * d.z;
             if (t0 > Util.EPS && Z0 < z0 && z0 < Z1)
             {
                 return new Hit(this, t0, null);
@@ -79,7 +79,7 @@ namespace PTSharpCore
 
         Vector IShape.NormalAt(Vector p)
         {
-            p.Z = 0;
+            p.z = 0;
             return p.Normalize();
         }
 

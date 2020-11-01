@@ -9,4 +9,3 @@
         ITexture MulScalar(double a);
     }
 }
-

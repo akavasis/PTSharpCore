@@ -10,14 +10,14 @@ namespace PTSharpCore
     {
         double func(double x, double y);
     }
-    
+
     class Function : Func
     {
         Func Funct;
         Box Box;
         Material Material;
 
-        Function() {}
+        Function() { }
 
         Function(Func Function, Box Box, Material Material)
         {
@@ -25,12 +25,12 @@ namespace PTSharpCore
             this.Box = Box;
             this.Material = Material;
         }
-        
+
         static IShape NewFunction(Func function, Box box, Material material)
         {
             return new Function(function, box, material);
         }
-        
+
         void IShape.Compile() { }
 
         Box GetBoundingBox()
@@ -40,7 +40,7 @@ namespace PTSharpCore
 
         bool Contains(Vector v)
         {
-            return v.Z < func(v.X, v.Y);
+            return v.z < func(v.x, v.y);
         }
 
         Hit IShape.Intersect(Ray ray)
@@ -60,12 +60,12 @@ namespace PTSharpCore
 
         Vector IShape.UV(Vector p)
         {
-            double x1 = Box.Min.X;
-            double x2 = Box.Max.X;
-            double y1 = Box.Min.Y;
-            double y2 = Box.Max.Y;
-            double u = p.X - x1 / x2 - x1;
-            double v = p.Y - y1 / y2 - y1;
+            double x1 = Box.Min.x;
+            double x2 = Box.Max.x;
+            double y1 = Box.Min.y;
+            double y2 = Box.Max.y;
+            double u = p.x - x1 / x2 - x1;
+            double v = p.y - y1 / y2 - y1;
             return new Vector(u, v, 0);
         }
 
@@ -77,8 +77,8 @@ namespace PTSharpCore
         Vector IShape.NormalAt(Vector p)
         {
             double eps = 1e-3;
-            double x = func(p.X - eps, p.Y) - func(p.X + eps, p.Y);
-            double y = func(p.X, p.Y - eps) - func(p.X, p.Y + eps);
+            double x = func(p.x - eps, p.y) - func(p.x + eps, p.y);
+            double y = func(p.x, p.y - eps) - func(p.x, p.y + eps);
             double z = 2 * eps;
             Vector v = new Vector(x, y, z);
             return v.Normalize();

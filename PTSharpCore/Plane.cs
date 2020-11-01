@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PTSharpCore
 {
@@ -17,16 +13,18 @@ namespace PTSharpCore
 
         Plane(Vector point, Vector normal, Material mat)
         {
-            this.Point = point;
-            this.Normal = normal;
-            this.Material = mat;
-            this.box = new Box(new Vector(-Util.INF, -Util.INF, -Util.INF), new Vector(Util.INF, Util.INF, Util.INF));
+            Point = point;
+            Normal = normal;
+            Material = mat;
+            box = new Box(new Vector(-Util.INF, -Util.INF, -Util.INF), new Vector(Util.INF, Util.INF, Util.INF));
         }
 
         internal static Plane NewPlane(Vector point, Vector normal, Material material)
         {
             return new Plane(point, normal.Normalize(), material);
         }
+
+        void IShape.Compile() { }
 
         Box IShape.BoundingBox()
         {
@@ -35,23 +33,18 @@ namespace PTSharpCore
 
         Hit IShape.Intersect(Ray ray)
         {
-            double d = this.Normal.Dot(ray.Direction);
+            double d = Normal.Dot(ray.Direction);
             if (Math.Abs(d) < Util.EPS)
             {
                 return Hit.NoHit;
             }
-            Vector a = this.Point.Sub(ray.Origin);
-            double t = a.Dot(this.Normal) / d;
+            Vector a = Point.Sub(ray.Origin);
+            double t = a.Dot(Normal) / d;
             if (t < Util.EPS)
             {
                 return Hit.NoHit;
             }
             return new Hit(this, t, null);
-        }
-        
-        Vector IShape.NormalAt(Vector a)
-        {
-            return this.Normal;
         }
 
         Vector IShape.UV(Vector a)
@@ -59,11 +52,13 @@ namespace PTSharpCore
             return new Vector();
         }
 
-        void IShape.Compile() { }
-
         public Material MaterialAt(Vector v)
         {
-            return this.Material;
+            return Material;
+        }
+        Vector IShape.NormalAt(Vector a)
+        {
+            return Normal;
         }
     }
 }

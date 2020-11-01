@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace PTSharpCore
 {
@@ -71,50 +72,59 @@ namespace PTSharpCore
             {
                 return Colour.Black;
             }
+
             var hit = scene.Intersect(ray);
+
             if (!hit.Ok())
             {
                 return sampleEnvironment(scene, ray);
             }
+
             var info = hit.Info(ray);
             var material = info.material;
             var result = Colour.Black;
+
             if (material.Emittance > 0)
             {
                 if (DirectLighting && !emission)
                 {
                     return Colour.Black;
                 }
-                result = result.Add(material.Color.MulScalar(material.Emittance * (double)samples));
+                result = result.Add(material.Color.MulScalar(material.Emittance * samples));
             }
+
             var n = (int)Math.Sqrt(samples);
             BounceType ma, mb;
-            if (SpecularMode.Equals(SpecularMode.SpecularModeAll) || (depth == 0 && SpecularMode.Equals(SpecularMode.SpecularModeFirst)))
+
+            if (SpecularMode == SpecularMode.SpecularModeAll || depth == 0 && SpecularMode == SpecularMode.SpecularModeFirst)
             {
                 ma = BounceType.BounceTypeDiffuse;
                 mb = BounceType.BounceTypeSpecular;
+
             }
             else
             {
                 ma = BounceType.BounceTypeAny;
                 mb = BounceType.BounceTypeAny;
             }
+
             for (int u = 0; u < n; u++)
             {
                 for (int v = 0; v < n; v++)
                 {
                     for (BounceType mode = ma; mode <= mb; mode++)
                     {
-                        var fu = ((double)u + rand.NextDouble()) / (double)n;
-                        var fv = ((double)v + rand.NextDouble()) / (double)n;
+
+                        var fu = (u + ThreadSafeRandom.NextDouble()) / n;
+                        var fv = (v + ThreadSafeRandom.NextDouble()) / n;
                         (var newRay, var reflected, var p) = ray.Bounce(info, fu, fv, mode, rand);
 
-                        if (mode.Equals(BounceType.BounceTypeAny))
+                        if (mode == BounceType.BounceTypeAny)
                         {
                             p = 1;
                         }
 
-                        if(p > 0 && reflected)
+                        if (p > 0 && reflected)
                         {
                             // specular
                             var indirect = sample(scene, newRay, reflected, 1, depth + 1, rand);
@@ -122,22 +132,23 @@ namespace PTSharpCore
                             result = result.Add(tinted.MulScalar(p));
                         }
 
-                        if( p > 0 && !reflected)
+                        if (p > 0 && !reflected)
                         {
                             // diffuse
                             var indirect = sample(scene, newRay, reflected, 1, depth + 1, rand);
                             var direct = Colour.Black;
 
-                            if(DirectLighting)
+                            if (DirectLighting)
                             {
                                 direct = sampleLights(scene, info.Ray, rand);
                             }
                             result = result.Add(material.Color.Mul(direct.Add(indirect)).MulScalar(p));
-                        }   
+                        }
+
                     }
                 }
             }
-            return result.DivScalar((double)(n*n));
+            return result.DivScalar(n * n);
         }
 
         Colour sampleEnvironment(Scene scene, Ray ray)
@@ -145,8 +156,8 @@ namespace PTSharpCore
             if (scene.Texture != null)
             {
                 var d = ray.Direction;
-                var u = Math.Atan2(d.Z, d.X) + scene.TextureAngle;
-                var v = Math.Atan2(d.Y, new Vector(d.X, 0, d.Z).Length());
+                var u = Math.Atan2(d.z, d.x) + scene.TextureAngle;
+                var v = Math.Atan2(d.y, new Vector(d.x, 0, d.z).Length());
                 u = (u + Math.PI) / (2 * Math.PI);
                 v = (v + Math.PI / 2) / Math.PI;
                 return scene.Texture.Sample(u, v);
@@ -157,11 +168,12 @@ namespace PTSharpCore
         Colour sampleLights(Scene scene, Ray n, Random rand)
         {
             var nLights = scene.Lights.Length;
-            if(nLights == 0)
+            if (nLights == 0)
             {
                 return Colour.Black;
             }
-            if(LightMode.Equals(LightMode.LightModeAll))
+
+            if (LightMode == LightMode.LightModeAll)
             {
                 Colour result = new Colour();
                 foreach (var light in scene.Lights)
@@ -169,12 +181,13 @@ namespace PTSharpCore
                     result = result.Add(sampleLight(scene, n, rand, light));
                 }
                 return result;
-        
-            } else
+
+            }
+            else
             {
                 // pick a random light
                 var light = scene.Lights[rand.Next(nLights)];
-                return sampleLight(scene, n, rand, light).MulScalar(nLights);
+                return sampleLight(scene, n, rand, light).MulScalar((double)nLights);
             }
         }
 
@@ -201,9 +214,9 @@ namespace PTSharpCore
             {
                 for (; ; )
                 {
-                    var x = (rand.NextDouble() * 2) - 1;
-                    var y = (rand.NextDouble() * 2) - 1;
-                    if ((x * x) + (y * y) <= 1)
+                    var x = rand.NextDouble() * 2 - 1;
+                    var y = rand.NextDouble() * 2 - 1;
+                    if (x * x + y * y <= 1)
                     {
                         var l = center.Sub(n.Origin).Normalize();
                         var u = l.Cross(Vector.RandomUnitVector(rand)).Normalize();

@@ -2,9 +2,11 @@ using System;
 
 namespace PTSharpCore
 {
+    ///
     /// ThreadSafeRandom.cs - Thread safe random number generation
-    /// Code expanded from article by Stephen Toub
-    /// https://devblogs.microsoft.com/pfxteam/getting-random-numbers-in-a-thread-safe-way/ 
+    /// Code from https://devblogs.microsoft.com/pfxteam/getting-random-numbers-in-a-thread-safe-way/ article by Stephen Toub
+    /// 
+
     class ThreadSafeRandom
     {
         private static Random _global = new Random();
